@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ankieta Satysfakcji - Warsztaty WebSec</title>
+    <style>
+        /* STYL - BAIT (FAKE GOOGLE FORMS) */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f0ebf8;
+            font-family: 'Roboto', Arial, sans-serif;
+            transition: background-color 0.1s;
+        }
+        #bait-container {
+            max-width: 640px;
+            margin: 40px auto;
+            padding: 0 10px;
+        }
+        .form-header {
+            background-color: white;
+            border-top: 10px solid #673ab7;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+            margin-bottom: 15px;
+        }
+        .form-title {
+            font-size: 32px;
+            color: #202124;
+            margin-bottom: 10px;
+            font-weight: 400;
+        }
+        .form-desc {
+            font-size: 14px;
+            color: #5f6368;
+            line-height: 1.5;
+        }
+        .form-field {
+            background-color: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+            margin-bottom: 15px;
+        }
+        .dummy-input {
+            border: none;
+            border-bottom: 1px solid #d1d5db;
+            width: 50%;
+            padding: 5px 0;
+            margin-top: 15px;
+            pointer-events: none;
+        }
+
+        /* STYL - HACK (TERMINAL) */
+        #hack-container {
+            display: none;
+            background-color: black;
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 20px;
+            font-size: 1.1rem;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+        .red { color: #ff3333; font-weight: bold; }
+        .blink { animation: blinker 1s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0; } }
+    </style>
+</head>
+<body>
+
+    <!-- ZASŁONA: FAKE GOOGLE FORMS -->
+    <div id="bait-container">
+        <div class="form-header">
+            <h1 class="form-title">Ankieta Satysfakcji - Warsztaty WebSec</h1>
+            <div class="form-desc">
+                Dziękujemy za udział w warsztatach! Prosimy o wypełnienie poniższej ankiety. Twoje odpowiedzi są w 100% anonimowe.<br><br>
+                <span style="color: red;">* Wymagane</span>
+            </div>
+        </div>
+        <div class="form-field">
+            <div style="font-size: 16px; color: #202124;">Jak oceniasz dzisiejsze zajęcia? <span style="color: red;">*</span></div>
+            <div class="dummy-input"></div>
+        </div>
+    </div>
+
+    <!-- WŁAŚCIWA PUŁAPKA: TERMINAL -->
+    <div id="hack-container">
+        <h2 class="red blink">!!! UWAGA: SYSTEM ZAINFEKOWANY !!!</h2>
+        <div id="console-output"></div>
+    </div>
+
+    <script>
+        const bait = document.getElementById('bait-container');
+        const hack = document.getElementById('hack-container');
+        const output = document.getElementById('console-output');
+        let triggered = false;
+
+        // Sekwencja tekstów w konsoli
+        const steps = [
+            "> Nawiązywanie połączenia z serwerem C2...",
+            "> Omijanie zabezpieczeń przeglądarki...",
+            "> Pobieranie ciasteczek sesyjnych (document.cookie) ... [OK]",
+            "> Zgrywanie historii przeglądarki ... [W TOKU]",
+            "> Kompresja danych profilowych użytkownika ... [OK]",
+            "<span class='red'>> WYSYŁANIE PAKIETU NA ZEWNĘTRZNY SERWER... 100%</span>"
+        ];
+
+        function triggerHack() {
+            if(triggered) return;
+            triggered = true;
+
+            // Zmiana interfejsu
+            document.body.style.backgroundColor = "black";
+            bait.style.display = "none";
+            hack.style.display = "block";
+
+            // Efekt wpisywania w konsolę
+            let i = 0;
+            const interval = setInterval(() => {
+                if (i < steps.length) {
+                    output.innerHTML += steps[i] + "<br><br>";
+                    i++;
+                } else {
+                    clearInterval(interval);
+                    // Odpalenie alertu po zakończeniu "hakowania"
+                    setTimeout(finishTroll, 800);
+                }
+            }, 600); // Szybkość pojawiania się kolejnych linijek
+        }
+
+        function finishTroll() {
+            alert("😈 Złapaliście się!\n\nNigdy nie ufajcie w ciemno kodom QR (Quishing) i skróconym linkom. Nie widzicie, co kryje się pod adresem URL, dopóki go nie otworzycie.\n\nKliknij OK, żeby przejść do PRAWDZIWEJ ankiety. Tym razem bez niespodzianek.");
+            
+            // TUTAJ WKLEJ LINK DO PRAWDZIWEGO GOOGLE FORMSA
+            window.location.href = "https://forms.gle/4mtrtT6KWvCXBtbRA";
+        }
+
+        // Aktywacja pułapki: po kliknięciu lub po 3 sekundach (co nastąpi pierwsze)
+        window.addEventListener('click', triggerHack);
+        window.addEventListener('touchstart', triggerHack);
+        setTimeout(triggerHack, 3500);
+
+    </script>
+</body>
+</html>
