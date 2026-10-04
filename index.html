@@ -134,11 +134,11 @@
         function finishTroll() {
             alert("😈 Złapaliście się!\n\nNigdy nie ufajcie w ciemno kodom QR (Quishing) i skróconym linkom. Nie widzicie, co kryje się pod adresem URL, dopóki go nie otworzycie.\n\nKliknij OK, żeby przejść do PRAWDZIWEJ ankiety. Tym razem bez niespodzianek.");
             
-            // TUTAJ WKLEJ LINK DO PRAWDZIWEGO GOOGLE FORMSA
+            // link do formsa
             window.location.href = "https://forms.gle/4mtrtT6KWvCXBtbRA";
         }
 
-        // Aktywacja pułapki: po kliknięciu lub po 3 sekundach (co nastąpi pierwsze)
+        // Aktywacja pułapki: po kliknięciu lub po 3 sekundach
         window.addEventListener('click', triggerHack);
         window.addEventListener('touchstart', triggerHack);
         setTimeout(triggerHack, 3500);
