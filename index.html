@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ankieta Satysfakcji - Warsztaty WebSec</title>
     <style>
-        /* STYL - BAIT (FAKE GOOGLE FORMS) */
+        /* STYL - FAKE GOOGLE FORMS */
         body {
             margin: 0;
             padding: 0;
@@ -53,7 +53,6 @@
             pointer-events: none;
         }
 
-        /* STYL - HACK (TERMINAL) */
         #hack-container {
             display: none;
             background-color: black;
@@ -102,7 +101,7 @@
         const steps = [
             "> Nawiązywanie połączenia z serwerem C2...",
             "> Omijanie zabezpieczeń przeglądarki...",
-            "> Pobieranie ciasteczek sesyjnych (document.cookie) ... [OK]",
+            "> Pobieranie cookies sesji ... [OK]",
             "> Zgrywanie historii przeglądarki ... [W TOKU]",
             "> Kompresja danych profilowych użytkownika ... [OK]",
             "<span class='red'>> WYSYŁANIE PAKIETU NA ZEWNĘTRZNY SERWER... 100%</span>"
@@ -125,20 +124,20 @@
                     i++;
                 } else {
                     clearInterval(interval);
-                    // Odpalenie alertu po zakończeniu "hakowania"
+                    // Odpalenie alertu po zakończeniu sekwancji
                     setTimeout(finishTroll, 800);
                 }
             }, 600); // Szybkość pojawiania się kolejnych linijek
         }
 
         function finishTroll() {
-            alert("😈 Złapaliście się!\n\nNigdy nie ufajcie w ciemno kodom QR (Quishing) i skróconym linkom. Nie widzicie, co kryje się pod adresem URL, dopóki go nie otworzycie.\n\nKliknij OK, żeby przejść do PRAWDZIWEJ ankiety. Tym razem bez niespodzianek.");
+            alert("Got you!\n\nEVIL forms\n\nKliknij OK, żeby przejść do PRAWDZIWEGO formsa for real");
             
-            // link do formsa
+            // Link do formsa
             window.location.href = "https://forms.gle/4mtrtT6KWvCXBtbRA";
         }
 
-        // Aktywacja pułapki: po kliknięciu lub po 3 sekundach
+        // Aktywacja po kliknięciu lub po 3 sekundach
         window.addEventListener('click', triggerHack);
         window.addEventListener('touchstart', triggerHack);
         setTimeout(triggerHack, 3500);
