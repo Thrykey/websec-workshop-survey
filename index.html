@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ankieta Satysfakcji - Warsztaty WebSec</title>
     <style>
-        /* STYL - FAKE GOOGLE FORMS */
+        /* ===== FAKE GOOGLE FORMS ===== */
+        * { box-sizing: border-box; }
         body {
             margin: 0;
             padding: 0;
             background-color: #f0ebf8;
             font-family: 'Roboto', Arial, sans-serif;
-            transition: background-color 0.1s;
         }
         #bait-container {
             max-width: 640px;
@@ -53,19 +53,205 @@
             pointer-events: none;
         }
 
+        /* ===== HACK TERMINAL ===== */
         #hack-container {
             display: none;
-            background-color: black;
+            background-color: #000;
             color: #00ff00;
             font-family: 'Courier New', Courier, monospace;
             padding: 20px;
-            font-size: 1.1rem;
-            height: 100vh;
-            box-sizing: border-box;
+            padding-top: 12px;
+            font-size: clamp(0.72rem, 2.4vw, 1.05rem);
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
         }
-        .red { color: #ff3333; font-weight: bold; }
-        .blink { animation: blinker 1s linear infinite; }
+
+        /* Pulsing red border glow */
+        @keyframes borderAlarm {
+            0%,100% { box-shadow: 0 0 0px #ff0000, inset 0 0 0px #ff0000; }
+            50%     { box-shadow: 0 0 28px #ff0000, inset 0 0 12px rgba(255,0,0,0.15); }
+        }
+        #hack-container.alarming {
+            animation: crtFlicker 4s infinite, borderAlarm 0.8s ease-in-out infinite;
+        }
+
+        /* Background red pulse */
+        @keyframes bgPulse {
+            0%,100% { background-color: #000; }
+            50%     { background-color: #0d0000; }
+        }
+        #hack-container.alarming { background-color: #000; animation: crtFlicker 4s infinite, borderAlarm 0.8s ease-in-out infinite, bgPulse 0.8s ease-in-out infinite; }
+
+        /* ── ALARM BAR ── */
+        #alarm-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #000;
+            border-bottom: 1px solid #330000;
+            padding: 6px 0 10px 0;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+        .alarm-light {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            animation: lightBlink 0.5s step-end infinite;
+        }
+        .alarm-light.red   { background: #ff2200; box-shadow: 0 0 8px #ff2200; animation-delay: 0s; }
+        .alarm-light.amber { background: #ff8800; box-shadow: 0 0 8px #ff8800; animation-delay: 0.25s; }
+        .alarm-light.red2  { background: #ff2200; box-shadow: 0 0 8px #ff2200; animation-delay: 0.1s; }
+        @keyframes lightBlink {
+            0%,49% { opacity: 1; }
+            50%,100%{ opacity: 0.08; }
+        }
+        #alarm-label {
+            color: #ff2200;
+            font-weight: bold;
+            font-size: clamp(0.7rem, 2.2vw, 0.95rem);
+            letter-spacing: 1px;
+            animation: alarmTextBlink 0.9s step-end infinite;
+        }
+        @keyframes alarmTextBlink {
+            0%,55%  { opacity: 1; }
+            56%,100%{ opacity: 0; }
+        }
+        #alarm-right {
+            margin-left: auto;
+            color: #ff4400;
+            font-size: clamp(0.62rem, 1.8vw, 0.82rem);
+            animation: alarmTextBlink 1.1s step-end infinite;
+            animation-delay: 0.4s;
+        }
+
+        /* Scanlines */
+        #hack-container::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(
+                to bottom,
+                transparent 0px,
+                transparent 3px,
+                rgba(0,0,0,0.18) 3px,
+                rgba(0,0,0,0.18) 4px
+            );
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* CRT flicker */
+        @keyframes crtFlicker {
+            0%,100% { opacity: 1; }
+            92%     { opacity: 1; }
+            93%     { opacity: 0.82; }
+            94%     { opacity: 1; }
+            97%     { opacity: 0.88; }
+            98%     { opacity: 1; }
+        }
+        #hack-container { animation: crtFlicker 4s infinite; }
+
+
+        /* ===== GLITCH HEADER ===== */
+        .glitch-wrap { position: relative; margin-bottom: 16px; }
+        .glitch {
+            color: #ff2222;
+            font-size: clamp(1rem, 5vw, 1.6rem);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            display: inline-block;
+            animation: glitchBase 2.5s infinite;
+        }
+        .glitch::before, .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            overflow: hidden;
+        }
+        .glitch::before {
+            color: #0ff;
+            animation: glitchTop 2.5s infinite;
+            clip-path: polygon(0 0, 100% 0, 100% 40%, 0 40%);
+        }
+        .glitch::after {
+            color: #f0f;
+            animation: glitchBot 2.5s infinite;
+            clip-path: polygon(0 60%, 100% 60%, 100% 100%, 0 100%);
+        }
+        @keyframes glitchBase {
+            0%,90%,100% { transform: translate(0); }
+            92% { transform: translate(-2px, 1px); }
+            94% { transform: translate(2px, -1px); }
+            96% { transform: translate(-1px, 2px); }
+        }
+        @keyframes glitchTop {
+            0%,90%,100% { transform: translate(0); }
+            91% { transform: translate(-3px, 0); }
+            93% { transform: translate(3px, 0); }
+        }
+        @keyframes glitchBot {
+            0%,90%,100% { transform: translate(0); }
+            92% { transform: translate(3px, 0); }
+            95% { transform: translate(-3px, 0); }
+        }
+
+        /* ===== CONSOLE ===== */
+        #console-output { line-height: 1.9; word-break: break-all; }
+        .line { display: block; }
+        .red  { color: #ff3333; font-weight: bold; }
+        .warn { color: #ffcc00; }
+
+        /* Blinking cursor */
+        .cursor::after {
+            content: '█';
+            animation: blinker 0.65s step-end infinite;
+        }
         @keyframes blinker { 50% { opacity: 0; } }
+
+        /* ===== PROGRESS BAR ===== */
+        .progress-wrap {
+            display: inline-block;
+            width: min(200px, 38vw);
+            background: #001400;
+            border: 1px solid #006600;
+            height: 14px;
+            vertical-align: middle;
+            margin: 0 8px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            display: block;   /* MUST be block — inline elements ignore width */
+            height: 100%;
+            width: 0%;
+        }
+        .pct-label {
+            font-size: 0.88em;
+            vertical-align: middle;
+            min-width: 4ch;
+            display: inline-block;
+        }
+
+        /* ===== SHAKE ===== */
+        @keyframes shakeAnim {
+            0%,100% { transform: translate(0); }
+            8%  { transform: translate(-10px,  5px); }
+            16% { transform: translate( 10px, -6px); }
+            24% { transform: translate(-9px,   7px); }
+            32% { transform: translate( 9px,  -7px); }
+            40% { transform: translate(-11px,  4px); }
+            50% { transform: translate( 11px, -4px); }
+            60% { transform: translate(-7px,   6px); }
+            70% { transform: translate( 7px,  -6px); }
+            80% { transform: translate(-4px,   3px); }
+            90% { transform: translate( 4px,  -3px); }
+        }
+        .shake { animation: shakeAnim 0.55s cubic-bezier(.36,.07,.19,.97); }
     </style>
 </head>
 <body>
@@ -85,63 +271,159 @@
         </div>
     </div>
 
-    <!-- WŁAŚCIWA PUŁAPKA: TERMINAL -->
+    <!-- TERMINAL PUŁAPKA -->
     <div id="hack-container">
-        <h2 class="red blink">!!! UWAGA: SYSTEM ZAINFEKOWANY !!!</h2>
+        <div id="alarm-bar">
+            <span id="alarm-label">⚠ KRYTYCZNE NARUSZENIE BEZPIECZEŃSTWA ⚠</span>
+            <span id="alarm-right">THREAT LEVEL: HIGH</span>
+        </div>
+        <div class="glitch-wrap">
+            <span class="glitch" data-text="!!! UWAGA: SYSTEM ZAINFEKOWANY !!!">!!! UWAGA: SYSTEM ZAINFEKOWANY !!!</span>
+        </div>
         <div id="console-output"></div>
     </div>
 
     <script>
-        const bait = document.getElementById('bait-container');
-        const hack = document.getElementById('hack-container');
-        const output = document.getElementById('console-output');
+        const bait    = document.getElementById('bait-container');
+        const hack    = document.getElementById('hack-container');
+        const output  = document.getElementById('console-output');
         let triggered = false;
 
-        // Sekwencja tekstów w konsoli
+        // ── Sekwencja ────────────────────────────────────────────────────
         const steps = [
-            "> Nawiązywanie połączenia z serwerem C2...",
-            "> Omijanie zabezpieczeń przeglądarki...",
-            "> Pobieranie cookies sesji ... [OK]",
-            "> Zgrywanie historii przeglądarki ... [W TOKU]",
-            "> Kompresja danych profilowych użytkownika ... [OK]",
-            "<span class='red'>> WYSYŁANIE PAKIETU NA ZEWNĘTRZNY SERWER... 100%</span>"
+            { type: 'text',     cls: '',     delay: 0,    text: '> Nawiązywanie połączenia z serwerem C2...         [OK]' },
+            { type: 'text',     cls: 'warn', delay: 750,  text: '> [!] Omijanie firewalla i WAF...               [BYPASS]' },
+            { type: 'text',     cls: '',     delay: 800,  text: '> Pobieranie cookies sesji...                      [OK]' },
+            { type: 'text',     cls: 'warn', delay: 650,  text: '> Zgrywanie historii przeglądarki...           [W TOKU]' },
+            { type: 'progress', danger: false, delay: 80, duration: 1500, label: '> TRANSFER DANYCH  ' },
+            { type: 'text',     cls: '',     delay: 450,  text: '> Kompresja danych profilowych...                  [OK]' },
+            { type: 'text',     cls: 'red',  delay: 700,  text: '> [!!!] WYSYŁANIE PAKIETU NA ZEWNĘTRZNY SERWER...     ', shake: true },
+            { type: 'progress', danger: true, delay: 60,  duration: 1900, label: '> UPLOAD DANYCH    ' },
+            { type: 'text',     cls: 'red',  delay: 250,  text: '> [!!!] PRZEJĘTO KONTROLĘ NAD URZĄDZENIEM          ', shake: true },
         ];
 
-        function triggerHack() {
-            if(triggered) return;
-            triggered = true;
-
-            // Zmiana interfejsu
-            document.body.style.backgroundColor = "black";
-            bait.style.display = "none";
-            hack.style.display = "block";
-
-            // Efekt wpisywania w konsolę
+        // ── Helpers ──────────────────────────────────────────────────────
+        function typeText(el, text, cb) {
             let i = 0;
-            const interval = setInterval(() => {
-                if (i < steps.length) {
-                    output.innerHTML += steps[i] + "<br><br>";
-                    i++;
-                } else {
-                    clearInterval(interval);
-                    // Odpalenie alertu po zakończeniu sekwancji
-                    setTimeout(finishTroll, 800);
+            el.classList.add('cursor');
+            const t = setInterval(() => {
+                el.textContent = text.slice(0, ++i);
+                if (i >= text.length) {
+                    clearInterval(t);
+                    el.classList.remove('cursor');
+                    if (cb) cb();
                 }
-            }, 600); // Szybkość pojawiania się kolejnych linijek
+            }, 10);
+        }
+
+        function buildProgressRow(label, isDanger) {
+            const row    = document.createElement('div');
+            row.className = 'line';
+
+            const lbl = document.createElement('span');
+            lbl.textContent = label;
+            lbl.className   = isDanger ? 'red' : '';
+
+            const barWrap = document.createElement('span');
+            barWrap.className = 'progress-wrap';
+
+            const fill = document.createElement('span');
+            fill.className = 'progress-fill';
+            fill.style.background = isDanger ? '#ff3333' : '#00ff00';
+            fill.style.boxShadow  = isDanger ? '0 0 10px #ff3333' : '0 0 7px #00ff00';
+
+            const pctEl = document.createElement('span');
+            pctEl.className  = 'pct-label';
+            pctEl.style.color = isDanger ? '#ff3333' : '#00ff00';
+            pctEl.textContent = '0%';
+
+            barWrap.appendChild(fill);
+            row.appendChild(lbl);
+            row.appendChild(barWrap);
+            row.appendChild(pctEl);
+
+            return { row, fill, pctEl };
+        }
+
+        function animProgress(fill, pctEl, duration, cb) {
+            const tickMs   = 40;
+            const tickStep = 100 / (duration / tickMs);
+            let pct = 0;
+
+            const t = setInterval(() => {
+                pct = Math.min(100, pct + tickStep);
+                fill.style.width      = pct.toFixed(2) + '%';
+                pctEl.textContent     = Math.floor(pct) + '%';
+                if (pct >= 100) {
+                    clearInterval(t);
+                    pctEl.textContent = '100%';
+                    if (cb) setTimeout(cb, 300);
+                }
+            }, tickMs);
+        }
+
+        function doShake() {
+            hack.classList.remove('shake');
+            hack.offsetHeight; // force reflow
+            hack.classList.add('shake');
+            hack.addEventListener('animationend', () => hack.classList.remove('shake'), { once: true });
+        }
+
+        // ── Główna sekwencja ─────────────────────────────────────────────
+        function runSteps(idx) {
+            if (idx >= steps.length) { setTimeout(finishTroll, 600); return; }
+            const s    = steps[idx];
+            const next = () => runSteps(idx + 1);
+
+            setTimeout(() => {
+                if (s.shake) doShake();
+
+                if (s.type === 'text') {
+                    const row   = document.createElement('div');
+                    row.className = 'line ' + (s.cls || '');
+                    const inner = document.createElement('span');
+                    row.appendChild(inner);
+                    output.appendChild(row);
+                    typeText(inner, s.text, next);
+
+                } else if (s.type === 'progress') {
+                    const { row, fill, pctEl } = buildProgressRow(s.label, s.danger);
+                    output.appendChild(row);
+                    // wait one frame so browser renders the bar before JS animates it
+                    requestAnimationFrame(() =>
+                        requestAnimationFrame(() =>
+                            animProgress(fill, pctEl, s.duration, next)
+                        )
+                    );
+                }
+
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            }, s.delay);
+        }
+
+        // ── Trigger ──────────────────────────────────────────────────────
+        function triggerHack() {
+            if (triggered) return;
+            triggered = true;
+            document.body.style.backgroundColor = '#000';
+            bait.style.display = 'none';
+            hack.style.display = 'block';
+            hack.classList.add('alarming');
+            runSteps(0);
         }
 
         function finishTroll() {
-            alert("Got you!\n\nEVIL forms\n\nKliknij OK, żeby przejść do PRAWDZIWEGO formsa for real");
-            
-            // Link do formsa
-            window.location.href = "https://forms.gle/4mtrtT6KWvCXBtbRA";
+            doShake();
+            setTimeout(() => doShake(), 580);
+            setTimeout(() => {
+                alert("Well, well, well...\nDaliście się zhackować.\n\nNo dobra, prawie. Ale gdyby to był prawdziwy phishing,\nTwoje cookies i historia wlaśnie trafiłyby na cudzy serwer.\n\nKliknij OK, żeby przejść do PRAWDZIWEGO formsa for real");
+                window.location.href = "https://forms.gle/4mtrtT6KWvCXBtbRA";
+            }, 1150);
         }
 
-        // Aktywacja po kliknięciu lub po 3 sekundach
-        window.addEventListener('click', triggerHack);
-        window.addEventListener('touchstart', triggerHack);
+        window.addEventListener('click',      triggerHack);
+        window.addEventListener('touchstart', triggerHack, { passive: true });
         setTimeout(triggerHack, 3500);
-
     </script>
 </body>
 </html>
